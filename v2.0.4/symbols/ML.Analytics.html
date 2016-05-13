@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ML.GeoPoint</title>
+		<title>JsDoc Reference - ML.Analytics</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -218,7 +218,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class ML.GeoPoint
+				Class ML.Analytics
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -226,17 +226,7 @@ ul.inheritsList
 				
 				
 			
-				<p>Represents a latitude / longitude point that may be associated
-with a key in a MLObject or used as a reference point for geo queries.
-This allows proximity-based queries on the key.</p>
-
-<p>Only one key in a class may contain a GeoPoint.</p>
-
-<p>Example:<pre>
-  var point = new ML.GeoPoint(30.0, -20.0);
-  var object = new ML.Object("PlaceObject");
-  object.set("location", point);
-  object.save();</pre></p>
+				
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/dist_ml.js.html">ml.js</a>.
@@ -245,7 +235,7 @@ This allows proximity-based queries on the key.</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ML.GeoPoint.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ML.Analytics.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -258,16 +248,9 @@ This allows proximity-based queries on the key.</p>
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ML.GeoPoint.html#constructor">ML.GeoPoint</a></b>(arg1, arg2)
+								<b><a href="../symbols/ML.Analytics.html#constructor">ML.Analytics</a></b>(options)
 							</div>
-							<div class="description">Creates a new GeoPoint with any of the following forms:<br>
-  <pre>
-  new GeoPoint(otherGeoPoint)
-  new GeoPoint(30, 30)
-  new GeoPoint([30, 30])
-  new GeoPoint({latitude: 30, longitude: 30})
-  new GeoPoint()  // defaults to (0, 0)
-  </pre></div>
+							<div class="description">ML.Analytics collects data of user actions and analytics it in MaxLeap.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -281,7 +264,7 @@ This allows proximity-based queries on the key.</p>
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ML.GeoPoint.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ML.Analytics.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -292,47 +275,56 @@ This allows proximity-based queries on the key.</p>
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">ML.GeoPoint.<b><a href="../symbols/ML.GeoPoint.html#.current">current</a></b>(options)
+								<div class="fixedFont"><b><a href="../symbols/ML.Analytics.html#trackEvent">trackEvent</a></b>(eventId, attrs)
 								</div>
-								<div class="description">Creates a GeoPoint with the user's current location, if available.</div>
+								<div class="description">Track custom event.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ML.GeoPoint.html#kilometersTo">kilometersTo</a></b>(point)
+								<div class="fixedFont"><b><a href="../symbols/ML.Analytics.html#trackPageBegin">trackPageBegin</a></b>()
 								</div>
-								<div class="description">Returns the distance from this GeoPoint to another in kilometers.</div>
+								<div class="description">Track data when an user open a page.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ML.GeoPoint.html#milesTo">milesTo</a></b>(point)
+								<div class="fixedFont"><b><a href="../symbols/ML.Analytics.html#trackSessionStart">trackSessionStart</a></b>(Event)
 								</div>
-								<div class="description">Returns the distance from this GeoPoint to another in miles.</div>
+								<div class="description">Track data when an user open a page.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ML.GeoPoint.html#radiansTo">radiansTo</a></b>(point)
+								<div class="fixedFont"><b><a href="../symbols/ML.Analytics.html#trackUserlogin">trackUserlogin</a></b>(data)
 								</div>
-								<div class="description">Returns the distance from this GeoPoint to another in radians.</div>
+								<div class="description">Track data when an user login.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ML.GeoPoint.html#toJSON">toJSON</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/ML.Analytics.html#trackUserLogout">trackUserLogout</a></b>(Event)
 								</div>
-								<div class="description">Returns a JSON representation of the GeoPoint, suitable for ML.</div>
+								<div class="description">Track data when an user logout.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ML.Analytics.html#trackUserRegister">trackUserRegister</a></b>(Event)
+								</div>
+								<div class="description">Track data when an user register.</div>
 							</td>
 						</tr>
 					
@@ -353,18 +345,11 @@ This allows proximity-based queries on the key.</p>
 				</div>
 				
 				<div class="fixedFont">
-						<b>ML.GeoPoint</b>(arg1, arg2)
+						<b>ML.Analytics</b>(options)
 				</div>
 				
 				<div class="description">
-					Creates a new GeoPoint with any of the following forms:<br>
-  <pre>
-  new GeoPoint(otherGeoPoint)
-  new GeoPoint(30, 30)
-  new GeoPoint([30, 30])
-  new GeoPoint({latitude: 30, longitude: 30})
-  new GeoPoint()  // defaults to (0, 0)
-  </pre>
+					ML.Analytics collects data of user actions and analytics it in MaxLeap.
 					
 				</div>
 				
@@ -376,16 +361,10 @@ This allows proximity-based queries on the key.</p>
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								 <b>arg1</b>
+								<span class="light fixedFont">{Object}</span>  <b>options</b>
 								
 							</dt>
-								<dd></dd>
-						
-							<dt>
-								 <b>arg2</b>
-								
-							</dt>
-								<dd></dd>
+								<dd>The initial configuration</dd>
 						
 						</dl>
 					
@@ -408,52 +387,15 @@ This allows proximity-based queries on the key.</p>
 					Method Detail
 				</div>
 				
-					<a name=".current"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">ML.GeoPoint.</span><b>current</b>(options)
-					
-					</div>
-					<div class="description">
-						Creates a GeoPoint with the user's current location, if available.
-Calls options.success with a new GeoPoint instance or calls options.error.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>options</b>
-									
-								</dt>
-								<dd>An object with success and error callbacks.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="kilometersTo"> </a>
+					<a name="trackEvent"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Number}</span>
-					<b>kilometersTo</b>(point)
+					<span class="light">{Promise}</span>
+					<b>trackEvent</b>(eventId, attrs)
 					
 					</div>
 					<div class="description">
-						Returns the distance from this GeoPoint to another in kilometers.
+						Track custom event.
 						
 						
 					</div>
@@ -465,10 +407,16 @@ Calls options.success with a new GeoPoint instance or calls options.error.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{<a href="../symbols/ML.GeoPoint.html">ML.GeoPoint</a>}</span> <b>point</b>
+									<span class="light fixedFont">{String}</span> <b>eventId</b>
 									
 								</dt>
-								<dd>the other ML.GeoPoint.</dd>
+								<dd>Id of the custom event.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>attrs</b>
+									
+								</dt>
+								<dd>Key-value map of the custom event.</dd>
 							
 							</dl>
 						
@@ -479,7 +427,7 @@ Calls options.success with a new GeoPoint instance or calls options.error.
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Number}</span> </dd>
+								<dd><span class="light fixedFont">{Promise}</span> </dd>
 							
 							</dl>
 						
@@ -488,101 +436,15 @@ Calls options.success with a new GeoPoint instance or calls options.error.
 
 					<hr />
 				
-					<a name="milesTo"> </a>
+					<a name="trackPageBegin"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Number}</span>
-					<b>milesTo</b>(point)
+					<span class="light">{Promise}</span>
+					<b>trackPageBegin</b>()
 					
 					</div>
 					<div class="description">
-						Returns the distance from this GeoPoint to another in miles.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/ML.GeoPoint.html">ML.GeoPoint</a>}</span> <b>point</b>
-									
-								</dt>
-								<dd>the other ML.GeoPoint.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Number}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="radiansTo"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Number}</span>
-					<b>radiansTo</b>(point)
-					
-					</div>
-					<div class="description">
-						Returns the distance from this GeoPoint to another in radians.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/ML.GeoPoint.html">ML.GeoPoint</a>}</span> <b>point</b>
-									
-								</dt>
-								<dd>the other ML.GeoPoint.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Number}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="toJSON"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Object}</span>
-					<b>toJSON</b>()
-					
-					</div>
-					<div class="description">
-						Returns a JSON representation of the GeoPoint, suitable for ML.
+						Track data when an user open a page.
 						
 						
 					</div>
@@ -597,7 +459,179 @@ Calls options.success with a new GeoPoint instance or calls options.error.
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Object}</span> </dd>
+								<dd><span class="light fixedFont">{Promise}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="trackSessionStart"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Promise}</span>
+					<b>trackSessionStart</b>(Event)
+					
+					</div>
+					<div class="description">
+						Track data when an user open a page.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>Event</b>
+									
+								</dt>
+								<dd>data of session start.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Promise}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="trackUserlogin"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Promise}</span>
+					<b>trackUserlogin</b>(data)
+					
+					</div>
+					<div class="description">
+						Track data when an user login.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>data</b>
+									
+								</dt>
+								<dd>Event data of user login.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Promise}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="trackUserLogout"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Promise}</span>
+					<b>trackUserLogout</b>(Event)
+					
+					</div>
+					<div class="description">
+						Track data when an user logout.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>Event</b>
+									
+								</dt>
+								<dd>data of user logout.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Promise}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="trackUserRegister"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Promise}</span>
+					<b>trackUserRegister</b>(Event)
+					
+					</div>
+					<div class="description">
+						Track data when an user register.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>Event</b>
+									
+								</dt>
+								<dd>data of user register.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Promise}</span> </dd>
 							
 							</dl>
 						
@@ -618,7 +652,7 @@ Calls options.success with a new GeoPoint instance or calls options.error.
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Mon May 09 2016 09:46:08 GMT+0800 (CST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Fri May 13 2016 09:55:13 GMT+0800 (CST)
 		</div>
 	</body>
 </html>
