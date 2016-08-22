@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: analytics.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: analytics.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+var _ = require('underscore');
+module.exports = function (ML) {
+  /**
+   * ML.Analytics collects data of user actions and analytics it in MaxLeap.
+   * @param {Object} options The initial configuration
+   * @constructor
+   */
+  ML.Analytics = function(options){
+    var UUID = uuid.v4();
+    var UNKNOWN = this.UNKNOWN = '0,0';
+    var INSTALLATION_FLAG = 'ml_installation_flag';
+    var REFERRER_START = '8cf1f64d97224f6eba3867b57822f528';
+    var detector = new ML.Detector();
+
+    var installation = ML.store.get(INSTALLATION_FLAG);
+    if(!installation){
+      installation = uuid.v4();
+    }
+    this.options = _.extend({
+      sdkVersion: ML.VERSION,
+      appUserId: installation,
+      sessionId: UUID,
+      deviceId: installation,
+      duration: 0,
+      push: false,
+      upgrade: false,
+      url: window.location.href,
+      referer: document.referrer || REFERRER_START,
+      userAgent: window.navigator.userAgent,
+      os: 'web',
+      osVersion: detector.getOSName() + ' ' + detector.getOSVersion(),
+      resolution: detector.getResolution(),
+      language: detector.getLanguage(),
+      userCreateTime: new Date().getTime(),
+      startTime: new Date().getTime(),
+      ctimestamp: new Date().getTime(),
+      channel: UNKNOWN,
+      network: UNKNOWN,
+      carrier: UNKNOWN,
+      national: UNKNOWN,
+      deviceModel: UNKNOWN
+    }, options);
+
+    this.trackPageBegin();
+    //Track new user only one time.
+    if(!ML.store.get(INSTALLATION_FLAG)){
+      this._trackNewUser();
+    }
+    
+    if(!ML.store.get(INSTALLATION_FLAG)){
+      ML.store.set(INSTALLATION_FLAG, installation, { expires: '1Y' });
+    }
+  };
+
+  _.extend(ML.Analytics.prototype, /** @lends ML.Analytics.prototype */{
+    /**
+     * Track data when an user open a page.
+     * @returns {Promise}
+     */
+    trackPageBegin: function(){
+      var data = {
+        PageView: [
+          _.extend({}, this.options, {
+            uuid: uuid.v4()
+          })
+        ]
+      };
+
+      this._trackSessionBegin();
+      this._trackTimelineSession();
+      return ML.Analytics._request(data, {appId: this.options.appId});
+    },
+    /**
+     * Track custom event.
+     * @param {String} eventId Id of the custom event.
+     * @param {Object} attrs Key-value map of the custom event.
+     * @returns {Promise}
+     */
+    trackEvent: function(eventId, attrs){
+      var data = {
+        Event: [
+          _.extend({}, this.options, {
+            eventId: eventId,
+            attrs: attrs,
+            uuid: uuid.v4()
+          })
+        ]
+      };
+      return ML.Analytics._request(data, {appId: this.options.appId});
+    },
+
+    /**
+     * Track data when an user login.
+     * @param {Object} data Event data of user login.
+     * @returns {Promise}
+     */
+    trackUserlogin: function(data){
+      var data = {
+        TimeLineEvent: [
+          _.extend({}, this.options, {
+            eventId: data.eventId,
+            eventName: this.UNKNOWN,
+            eventNickName: this.UNKNOWN,
+            eventType: 1,
+            uuid: uuid.v4()
+          })
+        ]
+      };
+      return ML.Analytics._request(data, {appId: this.options.appId});
+    },
+
+    /**
+     * Track data when an user register.
+     * @param {Object} Event data of user register.
+     * @returns {Promise}
+     */
+    trackUserRegister: function(data){
+      var data = {
+        TimeLineEvent: [
+          _.extend({}, this.options, {
+            eventId: data.eventId,
+            eventName: this.UNKNOWN,
+            eventNickName: this.UNKNOWN,
+            eventType: 0,
+            uuid: uuid.v4()
+          })
+        ]
+      };
+      return ML.Analytics._request(data, {appId: this.options.appId});
+    },
+
+    /**
+     * Track data when an user logout.
+     * @param {Object} Event data of user logout.
+     * @returns {Promise}
+     */
+    trackUserLogout: function(data){
+      var data = {
+        TimeLineEvent: [
+          _.extend({}, this.options, {
+            eventId: data.eventId,
+            eventName: this.UNKNOWN,
+            eventNickName: this.UNKNOWN,
+            eventType: 2,
+            uuid: uuid.v4()
+          })
+        ]
+      };
+      return ML.Analytics._request(data, {appId: this.options.appId});
+    },
+
+    /**
+     * Track data when an user open a page.
+     * @param {Object} Event data of session start.
+     * @returns {Promise}
+     */
+    trackSessionStart: function(data){
+      var data = {
+        TimeLineEvent: [
+          _.extend({}, this.options, {
+            eventId: data.eventId,
+            eventName: this.UNKNOWN,
+            eventNickName: this.UNKNOWN,
+            eventType: 3,
+            uuid: uuid.v4()
+          })
+        ]
+      };
+      return ML.Analytics._request(data, {appId: this.options.appId});
+    },
+
+    /**
+     * Track origin event.
+     * @param data
+     * @returns {*|Promise}
+     */
+    trackOriginEvent: function (data) {
+      return ML.Analytics._request(data, {appId: this.options.appId}, {
+        url: '2.0/track/event'
+      });
+    },
+
+    /**
+     * Track data when an user open a page.
+     * @returns {Promise}
+     */
+    _trackSessionBegin: function(){
+      var data = {
+        Session: [
+          _.extend({}, this.options, {
+            uuid: uuid.v4()
+          })
+        ]
+      };
+      return ML.Analytics._request(data, {appId: this.options.appId});
+    },
+
+    /**
+     * Track timeline 2.0.
+     * @returns {Promise}
+     */
+    _trackTimelineSession: function(){
+      var data = [
+        {
+          properties: _.extend({}, this.options, {
+            uuid: uuid.v4(),
+            _eventType: 3
+          }),
+
+          time: new Date().getTime(),
+          event: 'Session',
+          type: 'track',
+          distinct_id: uuid.v4()
+        }
+      ];
+
+      return ML.Analytics._request(data, {appId: this.options.appId}, {
+        url: '2.0/track/event'
+      });
+    },
+
+    /**
+     * Track data when an user open a website first time.
+     * @returns {Promise}
+     */
+    _trackNewUser: function(){
+      var data = {
+        NewUser: [
+          _.extend({}, this.options, {
+            uuid: uuid.v4()
+          })
+        ]
+      };
+      return ML.Analytics._request(data, {appId: this.options.appId});
+    }
+  });
+
+  _.extend(ML.Analytics, /** @lends ML.Analytics */{
+    /**
+     * Post data to server, and retry when fail.
+     * @param {Object} data
+     * @param {i} i Retry time, by default undefined.
+     * @returns {Promise}
+     * @private
+     */
+    _request: function(data, headers, options, i){
+      options = options || {};
+      if(!ML.analyticsEnable){
+        return;
+      }
+
+      var url = options.url || '2.0/analytics/at';
+      var method = options.method || 'POST';
+
+      return ML._ajax(method, ML.serverURL + url, JSON.stringify(data), null, null, {
+        'Content-Type': 'application/json',
+        'X-ML-Appid': headers.appId
+      }).then(function(res){
+        return res;
+      }, function(res){
+        i = i || 0;
+        if(i &lt; 2){
+          ML.Analytics._request(data, headers, options, ++i);
+        }
+        return res;
+      });
+    }
+  })
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ML.Analytics.html">Analytics</a></li><li><a href="ML.CloudCode.html">CloudCode</a></li><li><a href="ML.Error.html">Error</a></li><li><a href="ML.File.html">File</a></li><li><a href="ML.GeoPoint.html">GeoPoint</a></li><li><a href="ML.Object.html">Object</a></li><li><a href="ML.Query.html">Query</a></li><li><a href="ML.Relation.html">Relation</a></li><li><a href="ML.User.html">User</a></li><li><a href="module.exports__resolved.html">_resolved</a></li><li><a href="Timeline.html">Timeline</a></li></ul><h3>Namespaces</h3><ul><li><a href="Contains%2520all%2520ML%2520API%2520classes%2520and%2520functions..html">Contains all ML API classes and functions.</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_decode">_decode</a></li><li><a href="global.html#_extend">_extend</a></li><li><a href="global.html#_registerDecoder">_registerDecoder</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Aug 22 2016 10:08:34 GMT+0800 (CST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

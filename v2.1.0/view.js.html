@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: view.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: view.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+var _ = require('underscore');
+
+/*global _: false, document: false */
+module.exports = function(ML) {
+  /**
+   * Creating a ML.View creates its initial element outside of the DOM,
+   * if an existing element is not provided...
+   *
+   * &lt;p>A fork of Backbone.View, provided for your convenience.  If you use this
+   * class, you must also include jQuery, or another library that provides a
+   * jQuery-compatible $ function.  For more information, see the
+   * &lt;a href="http://documentcloud.github.com/backbone/#View">Backbone
+   * documentation&lt;/a>.&lt;/p>
+   * &lt;p>&lt;strong>&lt;em>Available in the client SDK only.&lt;/em>&lt;/strong>&lt;/p>
+   */
+  ML.View = function(options) {
+    console.warn("ML.View is deprecated, please don't use it anymore.");
+    this.cid = _.uniqueId('view');
+    this._configure(options || {});
+    this._ensureElement();
+    this.initialize.apply(this, arguments);
+    this.delegateEvents();
+  };
+
+  // Cached regex to split keys for `delegate`.
+  var eventSplitter = /^(\S+)\s*(.*)$/;
+
+  // List of view options to be merged as properties.
+
+  var viewOptions = ['model', 'collection', 'el', 'id', 'attributes',
+                     'className', 'tagName'];
+
+  // Set up all inheritable **ML.View** properties and methods.
+  _.extend(ML.View.prototype, ML.Events,
+           /** @lends ML.View.prototype */ {
+
+    // The default `tagName` of a View's element is `"div"`.
+    tagName: 'div',
+
+    /**
+     * jQuery delegate for element lookup, scoped to DOM elements within the
+     * current view. This should be prefered to global lookups where possible.
+     */
+    $: function(selector) {
+      return this.$el.find(selector);
+    },
+
+    /**
+     * Initialize is an empty function by default. Override it with your own
+     * initialization logic.
+     */
+    initialize: function(){},
+
+    /**
+     * The core function that your view should override, in order
+     * to populate its element (`this.el`), with the appropriate HTML. The
+     * convention is for **render** to always return `this`.
+     */
+    render: function() {
+      return this;
+    },
+
+    /**
+     * Remove this view from the DOM. Note that the view isn't present in the
+     * DOM by default, so calling this method may be a no-op.
+     */
+    remove: function() {
+      this.$el.remove();
+      return this;
+    },
+
+    /**
+     * For small amounts of DOM Elements, where a full-blown template isn't
+     * needed, use **make** to manufacture elements, one at a time.
+     * &lt;pre>
+     *     var el = this.make('li', {'class': 'row'},
+     *                        this.model.escape('title'));&lt;/pre>
+     */
+    make: function(tagName, attributes, content) {
+      var el = document.createElement(tagName);
+      if (attributes) {
+        ML.$(el).attr(attributes);
+      }
+      if (content) {
+        ML.$(el).html(content);
+      }
+      return el;
+    },
+
+    /**
+     * Changes the view's element (`this.el` property), including event
+     * re-delegation.
+     */
+    setElement: function(element, delegate) {
+      this.$el = ML.$(element);
+      this.el = this.$el[0];
+      if (delegate !== false) {
+        this.delegateEvents();
+      }
+      return this;
+    },
+
+    /**
+     * Set callbacks.  &lt;code>this.events&lt;/code> is a hash of
+     * &lt;pre>
+     * *{"event selector": "callback"}*
+     *
+     *     {
+     *       'mousedown .title':  'edit',
+     *       'click .button':     'save'
+     *       'click .open':       function(e) { ... }
+     *     }
+     * &lt;/pre>
+     * pairs. Callbacks will be bound to the view, with `this` set properly.
+     * Uses event delegation for efficiency.
+     * Omitting the selector binds the event to `this.el`.
+     * This only works for delegate-able events: not `focus`, `blur`, and
+     * not `change`, `submit`, and `reset` in Internet Explorer.
+     */
+    delegateEvents: function(events) {
+      events = events || ML._getValue(this, 'events');
+      if (!events) {
+        return;
+      }
+      this.undelegateEvents();
+      var self = this;
+      ML._objectEach(events, function(method, key) {
+        if (!_.isFunction(method)) {
+          method = self[events[key]];
+        }
+        if (!method) {
+          throw new Error('Event "' + events[key] + '" does not exist');
+        }
+        var match = key.match(eventSplitter);
+        var eventName = match[1], selector = match[2];
+        method = _.bind(method, self);
+        eventName += '.delegateEvents' + self.cid;
+        if (selector === '') {
+          self.$el.bind(eventName, method);
+        } else {
+          self.$el.delegate(selector, eventName, method);
+        }
+      });
+    },
+
+    /**
+     * Clears all callbacks previously bound to the view with `delegateEvents`.
+     * You usually don't need to use this, but may wish to if you have multiple
+     * Backbone views attached to the same DOM element.
+     */
+    undelegateEvents: function() {
+      this.$el.unbind('.delegateEvents' + this.cid);
+    },
+
+    /**
+     * Performs the initial configuration of a View with a set of options.
+     * Keys with special meaning *(model, collection, id, className)*, are
+     * attached directly to the view.
+     */
+    _configure: function(options) {
+      if (this.options) {
+        options = _.extend({}, this.options, options);
+      }
+      var self = this;
+      _.each(viewOptions, function(attr) {
+        if (options[attr]) {
+          self[attr] = options[attr];
+        }
+      });
+      this.options = options;
+    },
+
+    /**
+     * Ensure that the View has a DOM element to render into.
+     * If `this.el` is a string, pass it through `$()`, take the first
+     * matching element, and re-assign it to `el`. Otherwise, create
+     * an element from the `id`, `className` and `tagName` properties.
+     */
+    _ensureElement: function() {
+      if (!this.el) {
+        var attrs = ML._getValue(this, 'attributes') || {};
+        if (this.id) {
+          attrs.id = this.id;
+        }
+        if (this.className) {
+          attrs['class'] = this.className;
+        }
+        this.setElement(this.make(this.tagName, attrs), false);
+      } else {
+        this.setElement(this.el, false);
+      }
+    }
+
+  });
+
+  /**
+   * @function
+   * @param {Object} instanceProps Instance properties for the view.
+   * @param {Object} classProps Class properies for the view.
+   * @return {Class} A new subclass of &lt;code>ML.View&lt;/code>.
+   */
+  ML.View.extend = ML._extend;
+
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ML.Analytics.html">Analytics</a></li><li><a href="ML.CloudCode.html">CloudCode</a></li><li><a href="ML.Error.html">Error</a></li><li><a href="ML.File.html">File</a></li><li><a href="ML.GeoPoint.html">GeoPoint</a></li><li><a href="ML.Object.html">Object</a></li><li><a href="ML.Query.html">Query</a></li><li><a href="ML.Relation.html">Relation</a></li><li><a href="ML.User.html">User</a></li><li><a href="module.exports__resolved.html">_resolved</a></li><li><a href="Timeline.html">Timeline</a></li></ul><h3>Namespaces</h3><ul><li><a href="Contains%2520all%2520ML%2520API%2520classes%2520and%2520functions..html">Contains all ML API classes and functions.</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_decode">_decode</a></li><li><a href="global.html#_extend">_extend</a></li><li><a href="global.html#_registerDecoder">_registerDecoder</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Aug 22 2016 10:08:34 GMT+0800 (CST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
